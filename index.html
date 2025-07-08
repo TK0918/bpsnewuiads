@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海外广告投放报告</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #F9FAFB;
+            color: #333333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .header {
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 1.4;
+            color: #333333;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #7F8C8D;
+        }
+
+        /* 筛选器样式 */
+        .filters {
+            background: #FFFFFF;
+            border: 1px solid #E0E0E0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .filters-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 150px;
+        }
+
+        .filter-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333333;
+        }
+
+        .filter-input, .filter-select {
+            background: #FFFFFF;
+            border: 1px solid #E0E0E0;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            border-color: #2ECC71;
+        }
+
+        .btn-primary {
+            background: #2ECC71;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            align-self: end;
+        }
+
+        .btn-primary:hover {
+            background: #27AE60;
+        }
+
+        .btn-secondary {
+            background: #FFFFFF;
+            color: #2ECC71;
+            border: 1px solid #2ECC71;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            align-self: end;
+        }
+
+        .btn-secondary:hover {
+            background: #2ECC71;
+            color: #FFFFFF;
+        }
+
+        /* 关键指标卡片 */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metric-card {
+            background: #FFFFFF;
+            border: 1px solid #E0E0E0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 16px;
+        }
+
+        .metric-card h3 {
+            font-size: 14px;
+            color: #7F8C8D;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 4px;
+        }
+
+        .metric-change {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .metric-change.positive {
+            color: #2ECC71;
+        }
+
+        .metric-change.negative {
+            color: #E74C3C;
+        }
+
+        /* Tab标签样式 */
+        .tabs-container {
+            background: #FFFFFF;
+            border: 1px solid #E0E0E0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .tabs {
+            display: flex;
+            background: #F4F6F8;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            color: #7F8C8D;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: #FFFFFF;
+            color: #2ECC71;
+            border-bottom: 2px solid #2ECC71;
+        }
+
+        .tab:hover:not(.active) {
+            background: #F9FAFB;
+            color: #333333;
+        }
+
+        /* 表格样式 */
+        .table-container {
+            padding: 16px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .table th {
+            background: #F4F6F8;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+            color: #333333;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .table tbody tr:hover {
+            background: #F9FAFB;
+        }
+
+        /* 状态标签 */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #2ECC71;
+            color: #FFFFFF;
+        }
+
+        .status-paused {
+            background: #F39C12;
+            color: #FFFFFF;
+        }
+
+        .status-ended {
+            background: #E74C3C;
+            color: #FFFFFF;
+        }
+
+        /* 平台标签 */
+        .platform-tag {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .platform-facebook {
+            background: #1877F2;
+            color: #FFFFFF;
+        }
+
+        .platform-google {
+            background: #4285F4;
+            color: #FFFFFF;
+        }
+
+        .platform-tiktok {
+            background: #000000;
+            color: #FFFFFF;
+        }
+
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7F8C8D;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 主导航栏样式 */
+        .main-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding: 16px 0;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #7F8C8D;
+            font-weight: 500;
+            font-size: 16px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: #2ECC71;
+            background: #F8FFFC;
+        }
+
+        .nav-link.active {
+            color: #2ECC71;
+            background: #F8FFFC;
+            font-weight: 600;
+        }
+
+        /* 语言切换器样式 */
+        .language-switcher {
+            display: flex;
+            gap: 4px;
+            background: #FFFFFF;
+            border: 1px solid #E0E0E0;
+            border-radius: 6px;
+            padding: 2px;
+        }
+
+        .lang-btn {
+            padding: 6px 12px;
+            border: none;
+            background: transparent;
+            color: #7F8C8D;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lang-btn.active {
+            background: #2ECC71;
+            color: #FFFFFF;
+        }
+
+        .lang-btn:hover:not(.active) {
+            background: #F9FAFB;
+            color: #333333;
+        }
+
+        /* 隐藏状态列 */
+        .table th.status-column,
+        .table td.status-column {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 主导航栏 -->
+        <nav class="main-nav">
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link" data-i18n="nav_dashboard">数据概览</a>
+                <a href="index.html" class="nav-link active" data-i18n="nav_details">明细分析</a>
+            </div>
+            <!-- 语言切换器 -->
+            <div class="language-switcher">
+                <button class="lang-btn active" onclick="switchLanguage('zh')" data-lang="zh">中文</button>
+                <button class="lang-btn" onclick="switchLanguage('en')" data-lang="en">English</button>
+            </div>
+        </nav>
+
+        <!-- 页面标题 -->
+        <div class="header">
+            <h1 data-i18n="page_title">海外广告明细分析</h1>
+            <p data-i18n="page_subtitle">账户、系列、广告组、广告层级详细数据</p>
+        </div>
+
+        <!-- 筛选器 -->
+        <div class="filters">
+            <div class="filters-row">
+                <div class="filter-group">
+                    <label for="date-from" data-i18n="start_date">开始日期</label>
+                    <input type="date" id="date-from" class="filter-input" value="2024-01-01">
+                </div>
+                <div class="filter-group">
+                    <label for="date-to" data-i18n="end_date">结束日期</label>
+                    <input type="date" id="date-to" class="filter-input" value="2024-01-31">
+                </div>
+                <div class="filter-group">
+                    <label for="platform" data-i18n="ad_platform">广告平台</label>
+                    <select id="platform" class="filter-select">
+                        <option value="all" data-i18n="all_platforms">所有平台</option>
+                        <option value="facebook">Facebook</option>
+                        <option value="google">Google</option>
+                        <option value="tiktok">TikTok</option>
+                    </select>
+                </div>
+                <button class="btn-primary" onclick="filterData()" data-i18n="filter_btn">筛选</button>
+                <button class="btn-secondary" onclick="exportData()" data-i18n="export_btn">导出数据</button>
+            </div>
+        </div>
+
+
+
+        <!-- Tab标签和数据表格 -->
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('account')" data-i18n="tab_account">广告账户</button>
+                <button class="tab" onclick="showTab('campaign')" data-i18n="tab_campaign">广告系列</button>
+                <button class="tab" onclick="showTab('adset')" data-i18n="tab_adset">广告组</button>
+                <button class="tab" onclick="showTab('ad')" data-i18n="tab_ad">广告</button>
+            </div>
+
+
+
+            <!-- 账户维度数据 -->
+            <div id="account-content" class="tab-content active">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="account_name">账户名称</th>
+                                <th data-i18n="platform">平台</th>
+                                <th class="status-column" data-i18n="status">状态</th>
+                                <th data-i18n="spend">花费</th>
+                                <th data-i18n="impressions">展示次数</th>
+                                <th data-i18n="clicks">点击次数</th>
+                                <th data-i18n="ctr">点击率</th>
+                                <th data-i18n="cpc">CPC</th>
+                                <th data-i18n="conversions">转化次数</th>
+                                <th data-i18n="conversion_rate">转化率</th>
+                                <th data-i18n="cpa_label">CPA</th>
+                                <th data-i18n="roas">ROAS</th>
+                                <th data-i18n="revenue">收入</th>
+                            </tr>
+                        </thead>
+                        <tbody id="account-data">
+                            <tr>
+                                <td data-i18n="facebook_main_account">Facebook 主账户</td>
+                                <td><span class="platform-tag platform-facebook">Facebook</span></td>
+                                <td class="status-column"><span class="status-badge status-active" data-i18n="status_active">活跃</span></td>
+                                <td>$5,234.56</td>
+                                <td>567,890</td>
+                                <td>19,876</td>
+                                <td>3.5%</td>
+                                <td>$0.26</td>
+                                <td>543</td>
+                                <td>2.7%</td>
+                                <td>$9.64</td>
+                                <td style="color: #2ECC71; font-weight: 600;">4.8x</td>
+                                <td>$25,126.29</td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="google_ads_account">Google Ads 账户</td>
+                                <td><span class="platform-tag platform-google">Google</span></td>
+                                <td class="status-column"><span class="status-badge status-active" data-i18n="status_active">活跃</span></td>
+                                <td>$4,567.89</td>
+                                <td>423,456</td>
+                                <td>15,234</td>
+                                <td>3.6%</td>
+                                <td>$0.30</td>
+                                <td>412</td>
+                                <td>2.7%</td>
+                                <td>$11.09</td>
+                                <td style="color: #2ECC71; font-weight: 600;">3.9x</td>
+                                <td>$17,814.77</td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="tiktok_ad_account">TikTok 广告账户</td>
+                                <td><span class="platform-tag platform-tiktok">TikTok</span></td>
+                                <td class="status-column"><span class="status-badge status-active" data-i18n="status_active">活跃</span></td>
+                                <td>$2,543.22</td>
+                                <td>243,221</td>
+                                <td>10,568</td>
+                                <td>4.3%</td>
+                                <td>$0.24</td>
+                                <td>279</td>
+                                <td>2.6%</td>
+                                <td>$9.12</td>
+                                <td style="color: #2ECC71; font-weight: 600;">3.6x</td>
+                                <td>$9,155.59</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 广告系列维度数据 -->
+            <div id="campaign-content" class="tab-content">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="campaign_name">广告系列名称</th>
+                                <th data-i18n="account">账户</th>
+                                <th data-i18n="platform">平台</th>
+                                <th class="status-column" data-i18n="status">状态</th>
+                                <th data-i18n="spend">花费</th>
+                                <th data-i18n="impressions">展示次数</th>
+                                <th data-i18n="clicks">点击次数</th>
+                                <th data-i18n="ctr">点击率</th>
+                                <th data-i18n="cpc">CPC</th>
+                                <th data-i18n="conversions">转化次数</th>
+                                <th data-i18n="conversion_rate">转化率</th>
+                                <th data-i18n="cpa_label">CPA</th>
+                                <th data-i18n="roas">ROAS</th>
+                                <th data-i18n="revenue">收入</th>
+                            </tr>
+                        </thead>
+                        <tbody id="campaign-data">
+                            <tr>
+                                <td data-i18n="spring_promo_campaign">春季促销活动</td>
+                                <td data-i18n="facebook_main_account">Facebook 主账户</td>
+                                <td><span class="platform-tag platform-facebook">Facebook</span></td>
+                                <td class="status-column"><span class="status-badge status-active" data-i18n="status_active">活跃</span></td>
+                                <td>$2,134.56</td>
+                                <td>234,567</td>
+                                <td>8,234</td>
+                                <td>3.5%</td>
+                                <td>$0.26</td>
+                                <td>243</td>
+                                <td>2.9%</td>
+                                <td>$8.78</td>
+                                <td style="color: #2ECC71; font-weight: 600;">5.1x</td>
+                                <td>$10,886.26</td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="brand_promotion_campaign">品牌推广</td>
+                                <td data-i18n="google_ads_account">Google Ads 账户</td>
+                                <td><span class="platform-tag platform-google">Google</span></td>
+                                <td class="status-column"><span class="status-badge status-active" data-i18n="status_active">活跃</span></td>
+                                <td>$1,876.43</td>
+                                <td>187,643</td>
+                                <td>6,543</td>
+                                <td>3.5%</td>
+                                <td>$0.29</td>
+                                <td>189</td>
+                                <td>2.9%</td>
+                                <td>$9.93</td>
+                                <td style="color: #2ECC71; font-weight: 600;">4.2x</td>
+                                <td>$7,881.01</td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="new_product_launch_campaign">新品发布</td>
+                                <td data-i18n="tiktok_ad_account">TikTok 广告账户</td>
+                                <td><span class="platform-tag platform-tiktok">TikTok</span></td>
+                                <td class="status-column"><span class="status-badge status-paused" data-i18n="status_paused">暂停</span></td>
+                                <td>$1,234.67</td>
+                                <td>123,456</td>
+                                <td>5,432</td>
+                                <td>4.4%</td>
+                                <td>$0.23</td>
+                                <td>156</td>
+                                <td>2.9%</td>
+                                <td>$7.92</td>
+                                <td style="color: #2ECC71; font-weight: 600;">3.8x</td>
+                                <td>$4,691.75</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 广告组维度数据 -->
+            <div id="adset-content" class="tab-content">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="adset_name">广告组名称</th>
+                                <th data-i18n="campaign">广告系列</th>
+                                <th data-i18n="platform">平台</th>
+                                <th class="status-column" data-i18n="status">状态</th>
+                                <th data-i18n="spend">花费</th>
+                                <th data-i18n="impressions">展示次数</th>
+                                <th data-i18n="clicks">点击次数</th>
+                                <th data-i18n="ctr">点击率</th>
+                                <th data-i18n="cpc">CPC</th>
+                                <th data-i18n="conversions">转化次数</th>
+                                <th data-i18n="conversion_rate">转化率</th>
+                                <th data-i18n="cpa_label">CPA</th>
+                                <th data-i18n="roas">ROAS</th>
+                                <th data-i18n="revenue">收入</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adset-data">
+                            <tr>
+                                <td data-i18n="female_18_35_audience">18-35岁女性群体</td>
+                                <td data-i18n="spring_promo_campaign">春季促销活动</td>
+                                <td><span class="platform-tag platform-facebook">Facebook</span></td>
+                                <td class="status-column"><span class="status-badge status-active" data-i18n="status_active">活跃</span></td>
+                                <td>$1,067.28</td>
+                                <td>117,284</td>
+                                <td>4,117</td>
+                                <td>3.5%</td>
+                                <td>$0.26</td>
+                                <td>122</td>
+                                <td>3.0%</td>
+                                <td>$8.75</td>
+                                <td style="color: #2ECC71; font-weight: 600;">5.3x</td>
+                                <td>$5,656.58</td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="fashion_interest_targeting">兴趣定向-时尚</td>
+                                <td data-i18n="brand_promotion_campaign">品牌推广</td>
+                                <td><span class="platform-tag platform-google">Google</span></td>
+                                <td class="status-column"><span class="status-badge status-active" data-i18n="status_active">活跃</span></td>
+                                <td>$938.22</td>
+                                <td>93,822</td>
+                                <td>3,272</td>
+                                <td>3.5%</td>
+                                <td>$0.29</td>
+                                <td>94</td>
+                                <td>2.9%</td>
+                                <td>$9.98</td>
+                                <td style="color: #2ECC71; font-weight: 600;">4.1x</td>
+                                <td>$3,846.70</td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="young_user_audience">年轻用户群体</td>
+                                <td data-i18n="new_product_launch_campaign">新品发布</td>
+                                <td><span class="platform-tag platform-tiktok">TikTok</span></td>
+                                <td class="status-column"><span class="status-badge status-ended" data-i18n="status_ended">结束</span></td>
+                                <td>$617.34</td>
+                                <td>61,728</td>
+                                <td>2,716</td>
+                                <td>4.4%</td>
+                                <td>$0.23</td>
+                                <td>78</td>
+                                <td>2.9%</td>
+                                <td>$7.91</td>
+                                <td style="color: #2ECC71; font-weight: 600;">3.8x</td>
+                                <td>$2,345.89</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 广告维度数据 -->
+            <div id="ad-content" class="tab-content">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="ad_name">广告名称</th>
+                                <th data-i18n="adset">广告组</th>
+                                <th data-i18n="platform">平台</th>
+                                <th class="status-column" data-i18n="status">状态</th>
+                                <th data-i18n="spend">花费</th>
+                                <th data-i18n="impressions">展示次数</th>
+                                <th data-i18n="clicks">点击次数</th>
+                                <th data-i18n="ctr">点击率</th>
+                                <th data-i18n="cpc">CPC</th>
+                                <th data-i18n="conversions">转化次数</th>
+                                <th data-i18n="conversion_rate">转化率</th>
+                                <th data-i18n="cpa_label">CPA</th>
+                                <th data-i18n="roas">ROAS</th>
+                                <th data-i18n="revenue">收入</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ad-data">
+                            <tr>
+                                <td data-i18n="spring_new_product_image_ad">春季新品图片广告</td>
+                                <td data-i18n="female_18_35_audience">18-35岁女性群体</td>
+                                <td><span class="platform-tag platform-facebook">Facebook</span></td>
+                                <td class="status-column"><span class="status-badge status-active" data-i18n="status_active">活跃</span></td>
+                                <td>$533.64</td>
+                                <td>58,642</td>
+                                <td>2,059</td>
+                                <td>3.5%</td>
+                                <td>$0.26</td>
+                                <td>61</td>
+                                <td>3.0%</td>
+                                <td>$8.75</td>
+                                <td style="color: #2ECC71; font-weight: 600;">5.4x</td>
+                                <td>$2,881.66</td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="brand_story_video_ad">品牌故事视频</td>
+                                <td data-i18n="fashion_interest_targeting">兴趣定向-时尚</td>
+                                <td><span class="platform-tag platform-google">Google</span></td>
+                                <td class="status-column"><span class="status-badge status-active" data-i18n="status_active">活跃</span></td>
+                                <td>$469.11</td>
+                                <td>46,911</td>
+                                <td>1,636</td>
+                                <td>3.5%</td>
+                                <td>$0.29</td>
+                                <td>47</td>
+                                <td>2.9%</td>
+                                <td>$9.98</td>
+                                <td style="color: #2ECC71; font-weight: 600;">4.2x</td>
+                                <td>$1,970.26</td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="product_showcase_short_video">产品展示短视频</td>
+                                <td data-i18n="young_user_audience">年轻用户群体</td>
+                                <td><span class="platform-tag platform-tiktok">TikTok</span></td>
+                                <td class="status-column"><span class="status-badge status-paused" data-i18n="status_paused">暂停</span></td>
+                                <td>$308.67</td>
+                                <td>30,864</td>
+                                <td>1,358</td>
+                                <td>4.4%</td>
+                                <td>$0.23</td>
+                                <td>39</td>
+                                <td>2.9%</td>
+                                <td>$7.91</td>
+                                <td style="color: #2ECC71; font-weight: 600;">3.9x</td>
+                                <td>$1,203.81</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab切换功能
+        function showTab(tabName) {
+            // 隐藏所有tab内容
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // 移除所有tab的active状态
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 显示选中的tab内容
+            document.getElementById(tabName + '-content').classList.add('active');
+            
+            // 激活选中的tab
+            event.target.classList.add('active');
+
+            // 根据tab类型调整筛选器显示
+            updateFiltersForTab(tabName);
+        }
+
+        // 根据Tab类型调整筛选器
+        function updateFiltersForTab(tabName) {
+            // 这里可以根据不同的tab显示不同的筛选选项
+            // 例如：总览tab可能不需要某些筛选器，平台tab可能有特殊的筛选器等
+            console.log('当前Tab:', tabName);
+        }
+
+        // 筛选数据功能
+        function filterData() {
+            const dateFrom = document.getElementById('date-from').value;
+            const dateTo = document.getElementById('date-to').value;
+            const platform = document.getElementById('platform').value;
+
+            console.log('筛选参数:', {
+                dateFrom,
+                dateTo,
+                platform
+            });
+
+            // 这里可以添加实际的数据筛选逻辑
+            // 例如：调用API获取筛选后的数据，然后更新表格
+            alert('筛选功能已触发，请在控制台查看筛选参数');
+        }
+
+        // 导出数据功能
+        function exportData() {
+            // 获取当前活跃的tab
+            const activeTab = document.querySelector('.tab.active').textContent;
+            const dateFrom = document.getElementById('date-from').value;
+            const dateTo = document.getElementById('date-to').value;
+            const platform = document.getElementById('platform').value;
+
+            console.log('导出参数:', {
+                tab: activeTab,
+                dateFrom,
+                dateTo,
+                platform
+            });
+
+            // 这里可以添加实际的数据导出逻辑
+            // 例如：生成Excel文件、CSV文件等
+            alert(`正在导出${activeTab}数据\n日期范围: ${dateFrom} 至 ${dateTo}\n平台: ${platform}`);
+        }
+
+        // 模拟数据更新
+        function updateMetrics() {
+            // 这里可以添加实际的数据更新逻辑
+            // 例如：定期从API获取最新数据并更新指标卡片
+        }
+
+        // 语言切换功能
+        let currentLanguage = 'zh';
+
+        // 翻译数据
+        const translations = {
+            zh: {
+                // 导航
+                nav_dashboard: "数据概览",
+                nav_details: "明细分析",
+                
+                // 页面标题
+                page_title: "海外广告明细分析",
+                page_subtitle: "账户、系列、广告组、广告层级详细数据",
+                
+                // 筛选器
+                start_date: "开始日期",
+                end_date: "结束日期", 
+                ad_platform: "广告平台",
+                all_platforms: "所有平台",
+                filter_btn: "筛选",
+                export_btn: "导出数据",
+                
+                // 快速概览
+                total_spend: "总花费",
+                total_revenue: "总收入",
+                total_conversions: "总转化数",
+                avg_roas: "平均 ROAS",
+                avg_cpa: "平均 CPA",
+                conversion_rate: "转化率",
+                vs_last_period: "+12.5% 环比上期",
+                vs_last_period_2: "+22.3% 环比上期",
+                vs_last_period_3: "+15.8% 环比上期",
+                vs_last_period_4: "+8.7% 环比上期",
+                vs_last_period_5: "-3.2% 环比上期",
+                vs_last_period_6: "+0.4% 环比上期",
+                
+                // Tab标签
+                tab_account: "广告账户",
+                tab_campaign: "广告系列",
+                tab_adset: "广告组",
+                tab_ad: "广告",
+                
+                // 表格标题
+                date: "日期",
+                spend: "花费",
+                impressions: "展示次数",
+                clicks: "点击次数",
+                ctr: "点击率",
+                cpc: "CPC",
+                conversions: "转化数",
+                roas: "ROAS",
+                revenue: "收入",
+                account_name: "账户名称",
+                platform: "平台",
+                campaign_name: "广告系列名称",
+                account: "账户",
+                adset_name: "广告组名称",
+                campaign: "广告系列",
+                ad_name: "广告名称",
+                adset: "广告组",
+                
+                // 账户数据
+                facebook_main_account: "Facebook 主账户",
+                google_ads_account: "Google Ads 账户",
+                tiktok_ad_account: "TikTok 广告账户",
+                
+                // 广告系列数据
+                spring_promo_campaign: "春季促销活动",
+                brand_promotion_campaign: "品牌推广",
+                new_product_launch_campaign: "新品发布",
+                
+                // 广告组数据
+                female_18_35_audience: "18-35岁女性群体",
+                fashion_interest_targeting: "兴趣定向-时尚",
+                young_user_audience: "年轻用户群体",
+                
+                // 广告数据
+                spring_new_product_image_ad: "春季新品图片广告",
+                brand_story_video_ad: "品牌故事视频",
+                product_showcase_short_video: "产品展示短视频"
+            },
+            en: {
+                // 导航
+                nav_dashboard: "Dashboard",
+                nav_details: "Detailed Analysis",
+                
+                // 页面标题
+                page_title: "Overseas Advertising Detailed Analysis",
+                page_subtitle: "Account, Campaign, Ad Set, Ad Level Detailed Data",
+                
+                // 筛选器
+                start_date: "Start Date",
+                end_date: "End Date",
+                ad_platform: "Ad Platform",
+                all_platforms: "All Platforms",
+                filter_btn: "Filter",
+                export_btn: "Export Data",
+                
+                // 快速概览
+                total_spend: "Total Spend",
+                total_revenue: "Total Revenue",
+                total_conversions: "Total Conversions",
+                avg_roas: "Average ROAS",
+                avg_cpa: "Average CPA",
+                conversion_rate: "Conversion Rate",
+                vs_last_period: "+12.5% vs Last Period",
+                vs_last_period_2: "+22.3% vs Last Period",
+                vs_last_period_3: "+15.8% vs Last Period",
+                vs_last_period_4: "+8.7% vs Last Period",
+                vs_last_period_5: "-3.2% vs Last Period",
+                vs_last_period_6: "+0.4% vs Last Period",
+                
+                // Tab标签
+                tab_account: "Ad Account",
+                tab_campaign: "Campaign",
+                tab_adset: "Ad Set",
+                tab_ad: "Ad",
+                spend_label: "Spend:",
+                conversions_label: "Conversions:",
+                roas_label: "ROAS:",
+                cpa_label: "CPA:",
+                
+                // 表格标题
+                date: "Date",
+                spend: "Spend",
+                impressions: "Impressions",
+                clicks: "Clicks",
+                ctr: "CTR",
+                cpc: "CPC",
+                conversions: "Conversions",
+                roas: "ROAS",
+                revenue: "Revenue",
+                account_name: "Account Name",
+                platform: "Platform",
+                campaign_name: "Campaign Name",
+                account: "Account",
+                adset_name: "Ad Set Name",
+                campaign: "Campaign",
+                ad_name: "Ad Name",
+                adset: "Ad Set",
+                
+                // 账户数据
+                facebook_main_account: "Facebook Main Account",
+                google_ads_account: "Google Ads Account",
+                tiktok_ad_account: "TikTok Ad Account",
+                
+                // 广告系列数据
+                spring_promo_campaign: "Spring Promotion Campaign",
+                brand_promotion_campaign: "Brand Promotion Campaign",
+                new_product_launch_campaign: "New Product Launch Campaign",
+                
+                // 广告组数据
+                female_18_35_audience: "Female 18-35 Audience",
+                fashion_interest_targeting: "Fashion Interest Targeting",
+                young_user_audience: "Young User Audience",
+                
+                // 广告数据
+                spring_new_product_image_ad: "Spring New Product Image Ad",
+                brand_story_video_ad: "Brand Story Video Ad",
+                product_showcase_short_video: "Product Showcase Short Video"
+            }
+        };
+
+        // 切换语言函数
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            
+            // 更新语言按钮状态
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
+            
+            // 更新页面文本
+            updatePageText(lang);
+        }
+
+        // 更新页面文本
+        function updatePageText(lang) {
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            // 更新下拉选项
+            updateSelectOptions(lang);
+        }
+
+        // 更新下拉选项文本
+        function updateSelectOptions(lang) {
+            const selectElements = document.querySelectorAll('select option[data-i18n]');
+            selectElements.forEach(option => {
+                const key = option.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    option.textContent = translations[lang][key];
+                }
+            });
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('海外广告投放报告页面已加载');
+            // 初始化语言
+            updatePageText(currentLanguage);
+        });
+    </script>
+</body>
+</html> 
